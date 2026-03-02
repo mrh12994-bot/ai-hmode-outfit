@@ -1,91 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <title>أي شخصية أنمي تمثلك؟</title>
 <style>
-    body { font-family: Arial; text-align: center; background: #f2f2f2; padding: 30px; }
-    h1 { margin-bottom: 20px; }
-    .question { margin: 20px 0; font-size: 20px; }
-    button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    #result { margin-top: 30px; font-size: 22px; font-weight: bold; }
+body{
+    font-family: Arial;
+    background: linear-gradient(135deg,#1e1e2f,#2a2a4f);
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+h1{margin-bottom:20px;}
+.question{font-size:20px;margin:20px 0;}
+button{
+    margin:8px;
+    padding:10px 20px;
+    font-size:16px;
+    cursor:pointer;
+    border:none;
+    border-radius:8px;
+}
+.option{background:#444;color:white;}
+.option:hover{background:#666;}
+#result{
+    margin-top:30px;
+    font-size:22px;
+    font-weight:bold;
+}
+img{
+    width:200px;
+    margin-top:20px;
+    border-radius:12px;
+}
 </style>
 </head>
 <body>
 
 <h1>أي شخصية أنمي تمثلك؟</h1>
 
-<div id="quiz">
-    <div class="question" id="question"></div>
-    <div id="options"></div>
-</div>
-
+<div id="quiz"></div>
 <div id="result"></div>
 
 <script>
-const quizData = [
-    {
-        question: "أنت اجتماعي أم هادئ؟",
-        options: ["اجتماعي", "هادئ"]
-    },
-    {
-        question: "تحب المغامرة أم الاستقرار؟",
-        options: ["مغامرة", "استقرار"]
-    },
-    {
-        question: "أكثر شيء يميزك: القوة أم الذكاء؟",
-        options: ["القوة", "الذكاء"]
-    }
+
+// ================== 20 سؤال ==================
+const questions = [
+"هل أنت اجتماعي؟",
+"هل تحب القتال؟",
+"هل تعتمد على ذكائك أكثر من قوتك؟",
+"هل تحب العمل الجماعي؟",
+"هل تفضل العزلة أحياناً؟",
+"هل تتصرف بسرعة بدون تفكير؟",
+"هل تحب القيادة؟",
+"هل تغضب بسرعة؟",
+"هل تحب مساعدة الآخرين؟",
+"هل لديك طموح كبير؟",
+"هل تتحمل المسؤولية؟",
+"هل تحب المخاطرة؟",
+"هل تفكر قبل أن تتكلم؟",
+"هل تثق بنفسك؟",
+"هل لديك جانب مظلم؟",
+"هل أنت هادئ غالباً؟",
+"هل تحب المنافسة؟",
+"هل أنت مخلص لأصدقائك؟",
+"هل تحب أن تكون مختلف؟",
+"هل تواجه مشاكلك بشجاعة؟"
 ];
 
-const characters = [
-    {name: "ناروتو", criteria: ["اجتماعي","مغامرة","القوة"]},
-    {name: "ساتورو غوغو", criteria: ["هادئ","استقرار","الذكاء"]},
-    {name: "لوك", criteria: ["اجتماعي","استقرار","الذكاء"]},
-    {name: "إيتشيغو", criteria: ["هادئ","مغامرة","القوة"]}
-];
+// ================== أنواع الشخصية ==================
+const personalityTypes = ["Brave","Smart","Calm","Dark","Leader"];
+
+let scores = {
+Brave:0,
+Smart:0,
+Calm:0,
+Dark:0,
+Leader:0
+};
 
 let current = 0;
-let answers = [];
 
+// ================== عرض السؤال ==================
 function showQuestion(){
-    if(current < quizData.length){
-        document.getElementById('question').innerText = quizData[current].question;
-        let optionsHtml = '';
-        quizData[current].options.forEach(opt => {
-            optionsHtml += `<button onclick="choose('${opt}')">${opt}</button>`;
-        });
-        document.getElementById('options').innerHTML = optionsHtml;
-    } else {
-        showResult();
-    }
+if(current < questions.length){
+document.getElementById("quiz").innerHTML = `
+<div class="question">${questions[current]}</div>
+<button class="option" onclick="answer('yes')">نعم</button>
+<button class="option" onclick="answer('no')">لا</button>
+`;
+}else{
+showResult();
+}
 }
 
-function choose(ans){
-    answers.push(ans);
-    current++;
-    showQuestion();
+// ================== تسجيل الإجابة ==================
+function answer(choice){
+
+if(choice === "yes"){
+switch(current){
+case 0: scores.Brave++; break;
+case 1: scores.Brave++; break;
+case 2: scores.Smart++; break;
+case 3: scores.Leader++; break;
+case 4: scores.Dark++; break;
+case 5: scores.Brave++; break;
+case 6: scores.Leader++; break;
+case 7: scores.Dark++; break;
+case 8: scores.Calm++; break;
+case 9: scores.Leader++; break;
+case 10: scores.Leader++; break;
+case 11: scores.Brave++; break;
+case 12: scores.Smart++; break;
+case 13: scores.Brave++; break;
+case 14: scores.Dark++; break;
+case 15: scores.Calm++; break;
+case 16: scores.Brave++; break;
+case 17: scores.Calm++; break;
+case 18: scores.Dark++; break;
+case 19: scores.Brave++; break;
+}
 }
 
+current++;
+showQuestion();
+}
+
+// ================== إنشاء 100 شخصية ==================
+function generateCharacters(){
+let characters = [];
+
+for(let i=1;i<=100;i++){
+let type = personalityTypes[i % personalityTypes.length];
+
+characters.push({
+name: "Anime Character #" + i,
+type: type,
+image: "https://picsum.photos/300?random=" + i
+});
+}
+
+return characters;
+}
+
+const characters = generateCharacters();
+
+// ================== عرض النتيجة ==================
 function showResult(){
-    let bestMatch = characters[0];
-    let maxScore = 0;
-    characters.forEach(char => {
-        let score = 0;
-        for(let i=0;i<answers.length;i++){
-            if(answers[i]===char.criteria[i]) score++;
-        }
-        if(score > maxScore){
-            maxScore = score;
-            bestMatch = char;
-        }
-    });
-    document.getElementById('quiz').style.display = 'none';
-    document.getElementById('result').innerHTML = `شخصيتك الأنمي: ${bestMatch.name}`;
+
+let topType = Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
+
+let filtered = characters.filter(c => c.type === topType);
+
+let randomCharacter = filtered[Math.floor(Math.random()*filtered.length)];
+
+document.getElementById("quiz").style.display="none";
+
+document.getElementById("result").innerHTML = `
+شخصيتك الأقرب هي:<br><br>
+${randomCharacter.name}<br>
+(${topType})<br>
+<img src="${randomCharacter.image}">
+`;
 }
 
 showQuestion();
-</script>
 
+</script>
 </body>
 </html>
