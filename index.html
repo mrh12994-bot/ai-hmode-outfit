@@ -1,55 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Outfit Tool</title>
+    <meta charset="UTF-8">
+    <title>AI Outfit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin: 20px 0;
+        }
+        .iframe-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 40px auto;
+        }
+    </style>
 </head>
 <body>
-  <h2>AI Outfit Changer</h2>
 
-  <input type="file" id="imageInput"><br><br>
+    <h1>AI Outfit Changer</h1>
+    <p>رفع صورة واختيار نوع الملابس لتغييرها بواسطة AI</p>
 
-  <select id="style">
-    <option value="formal suit">Formal</option>
-    <option value="swimsuit">Swimsuit</option>
-    <option value="luxury outfit">Luxury</option>
-  </select>
+    <div class="iframe-container">
+        <iframe 
+            src="https://huggingface.co/spaces/runwayml/stable-diffusion-2-inpainting" 
+            width="100%" 
+            height="800"
+            style="border:1px solid #ccc;">
+        </iframe>
+    </div>
 
-  <button onclick="send()">Change</button>
-
-  <br><br>
-  <img id="result" width="300"/>
-
-<script>
-async function send() {
-  const file = document.getElementById("imageInput").files[0];
-  const style = document.getElementById("style").value;
-
-  const reader = new FileReader();
-  reader.onload = async function() {
-    const base64 = reader.result.split(",")[1];
-
-    const response = await fetch("https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer YOUR_TOKEN_HERE",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        inputs: `photo of a person wearing ${style}`
-      })
-    });
-
-    const blob = await response.blob();
-    document.getElementById("result").src = URL.createObjectURL(blob);
-  };
-
-  reader.readAsDataURL(file);
-}
-</script>
-
-</<iframe 
-    src="https://huggingface.co/spaces/runwayml/stable-diffusion-2-inpainting" 
-    width="100%" 
-    height="800">
-</iframe>>
+</body>
 </html>
