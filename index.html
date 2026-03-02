@@ -2,41 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Outfit Changer</title>
+    <title>Rock Paper Scissors</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 30px;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        .btn {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .btn:hover {
-            background-color: #0056cc;
-        }
+        body { font-family: Arial; text-align:center; margin-top:50px; }
+        button { font-size:20px; padding:10px 20px; margin:10px; cursor:pointer; }
+        #result { margin-top:20px; font-size:22px; font-weight:bold; }
     </style>
 </head>
 <body>
 
-    <h1>AI Outfit Changer</h1>
-    <p>اضغط الزر التالي لفتح الأداة في صفحة جديدة</p>
+<h1>Rock Paper Scissors</h1>
+<p>اختر: حجر، ورقة، مقص</p>
 
-    <a class="btn" href="https://huggingface.co/spaces/runwayml/stable-diffusion-2-inpainting" target="_blank">
-        افتح AI لتعديل الملابس
-    </a>
+<button onclick="play('rock')">حجر</button>
+<button onclick="play('paper')">ورقة</button>
+<button onclick="play('scissors')">مقص</button>
+
+<div id="result"></div>
+
+<script>
+function play(userChoice){
+    const choices = ['rock', 'paper', 'scissors'];
+    const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+    let result = '';
+    if(userChoice === computerChoice){
+        result = "تعادل!";
+    } else if(
+        (userChoice==='rock' && computerChoice==='scissors') ||
+        (userChoice==='paper' && computerChoice==='rock') ||
+        (userChoice==='scissors' && computerChoice==='paper')
+    ){
+        result = "فزت!";
+    } else {
+        result = "خسرت!";
+    }
+
+    document.getElementById('result').innerHTML = `أنت اخترت: ${userChoice} | الكمبيوتر: ${computerChoice} <br> ${result}`;
+}
+</script>
 
 </body>
 </html>
