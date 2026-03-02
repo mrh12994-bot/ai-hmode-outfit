@@ -1,45 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Rock Paper Scissors</title>
-    <style>
-        body { font-family: Arial; text-align:center; margin-top:50px; }
-        button { font-size:20px; padding:10px 20px; margin:10px; cursor:pointer; }
-        #result { margin-top:20px; font-size:22px; font-weight:bold; }
-    </style>
+<meta charset="UTF-8">
+<title>أي شخصية أنمي تمثلك؟</title>
+<style>
+    body { font-family: Arial; text-align: center; background: #f2f2f2; padding: 30px; }
+    h1 { margin-bottom: 20px; }
+    .question { margin: 20px 0; font-size: 20px; }
+    button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #result { margin-top: 30px; font-size: 22px; font-weight: bold; }
+</style>
 </head>
 <body>
 
-<h1>Rock Paper Scissors</h1>
-<p>اختر: حجر، ورقة، مقص</p>
+<h1>أي شخصية أنمي تمثلك؟</h1>
 
-<button onclick="play('rock')">حجر</button>
-<button onclick="play('paper')">ورقة</button>
-<button onclick="play('scissors')">مقص</button>
+<div id="quiz">
+    <div class="question" id="question"></div>
+    <div id="options"></div>
+</div>
 
 <div id="result"></div>
 
 <script>
-function play(userChoice){
-    const choices = ['rock', 'paper', 'scissors'];
-    const computerChoice = choices[Math.floor(Math.random() * 3)];
-
-    let result = '';
-    if(userChoice === computerChoice){
-        result = "تعادل!";
-    } else if(
-        (userChoice==='rock' && computerChoice==='scissors') ||
-        (userChoice==='paper' && computerChoice==='rock') ||
-        (userChoice==='scissors' && computerChoice==='paper')
-    ){
-        result = "فزت!";
-    } else {
-        result = "خسرت!";
+const quizData = [
+    {
+        question: "أنت اجتماعي أم هادئ؟",
+        options: ["اجتماعي", "هادئ"]
+    },
+    {
+        question: "تحب المغامرة أم الاستقرار؟",
+        options: ["مغامرة", "استقرار"]
+    },
+    {
+        question: "أكثر شيء يميزك: القوة أم الذكاء؟",
+        options: ["القوة", "الذكاء"]
     }
+];
 
-    document.getElementById('result').innerHTML = `أنت اخترت: ${userChoice} | الكمبيوتر: ${computerChoice} <br> ${result}`;
+const characters = [
+    {name: "ناروتو", criteria: ["اجتماعي","مغامرة","القوة"]},
+    {name: "ساتورو غوغو", criteria: ["هادئ","استقرار","الذكاء"]},
+    {name: "لوك", criteria: ["اجتماعي","استقرار","الذكاء"]},
+    {name: "إيتشيغو", criteria: ["هادئ","مغامرة","القوة"]}
+];
+
+let current = 0;
+let answers = [];
+
+function showQuestion(){
+    if(current < quizData.length){
+        document.getElementById('question').innerText = quizData[current].question;
+        let optionsHtml = '';
+        quizData[current].options.forEach(opt => {
+            optionsHtml += `<button onclick="choose('${opt}')">${opt}</button>`;
+        });
+        document.getElementById('options').innerHTML = optionsHtml;
+    } else {
+        showResult();
+    }
 }
+
+function choose(ans){
+    answers.push(ans);
+    current++;
+    showQuestion();
+}
+
+function showResult(){
+    let bestMatch = characters[0];
+    let maxScore = 0;
+    characters.forEach(char => {
+        let score = 0;
+        for(let i=0;i<answers.length;i++){
+            if(answers[i]===char.criteria[i]) score++;
+        }
+        if(score > maxScore){
+            maxScore = score;
+            bestMatch = char;
+        }
+    });
+    document.getElementById('quiz').style.display = 'none';
+    document.getElementById('result').innerHTML = `شخصيتك الأنمي: ${bestMatch.name}`;
+}
+
+showQuestion();
 </script>
 
 </body>
