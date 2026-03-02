@@ -2,38 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Outfit</title>
+    <title>AI Outfit Changer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f2f2f2;
+            background-color: #f9f9f9;
             margin: 0;
-            padding: 0;
+            padding: 30px;
         }
         h1 {
-            margin: 20px 0;
+            margin-bottom: 20px;
         }
-        .iframe-container {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto 40px auto;
+        .btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #0056cc;
         }
     </style>
 </head>
 <body>
 
     <h1>AI Outfit Changer</h1>
-    <p>رفع صورة واختيار نوع الملابس لتغييرها بواسطة AI</p>
+    <p>اضغط الزر التالي لفتح الأداة في صفحة جديدة</p>
 
-    <div class="iframe-container">
-        <iframe 
-            src="https://huggingface.co/spaces/runwayml/stable-diffusion-2-inpainting" 
-            width="100%" 
-            height="800"
-            style="border:1px solid #ccc;">
-        </iframe>
-    </div>
+    <a class="btn" href="https://huggingface.co/spaces/runwayml/stable-diffusion-2-inpainting" target="_blank">
+        افتح AI لتعديل الملابس
+    </a>
 
 </body>
 </html>
