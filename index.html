@@ -3,77 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تأثيرات مضحكة</title>
+<title>موقع صور مضحكة</title>
 <style>
   body {
-    margin: 0;
-    padding: 0;
-    background: black;
-    height: 100vh;
+    font-family: sans-serif;
+    background: linear-gradient(120deg, #ff9a9e, #fad0c4);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    cursor: pointer;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 50px 0;
   }
-
   h1 {
-    font-size: 3em;
-    color: lime;
-    animation: glitch 0.2s infinite;
-    position: absolute;
+    color: #fff;
+    text-shadow: 0 0 10px #000;
   }
-
-  @keyframes glitch {
-    0% {transform: translate(0,0); color: lime;}
-    20% {transform: translate(-5px,5px); color: cyan;}
-    40% {transform: translate(5px,-5px); color: magenta;}
-    60% {transform: translate(-5px,-5px); color: yellow;}
-    80% {transform: translate(5px,5px); color: orange;}
-    100% {transform: translate(0,0); color: lime;}
+  input[type="file"] {
+    margin: 20px 0;
   }
-
-  .particle {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: white;
-    border-radius: 50%;
-    pointer-events: none;
+  #output img {
+    max-width: 300px;
+    margin: 10px;
+    border-radius: 15px;
+    border: 3px solid #fff;
+    box-shadow: 0 0 15px #000;
   }
 </style>
 </head>
 <body>
 
-<h1>اضغط هنا 🤪</h1>
+<h1>ارفع صورتك وخلينا نضحك 😂</h1>
+<input type="file" id="fileInput" accept="image/*">
+<div id="output"></div>
 
 <script>
-const colors = ["lime","cyan","magenta","yellow","orange","#00ff94","#ff00ff","#00ffff"];
+const fileInput = document.getElementById('fileInput');
+const output = document.getElementById('output');
 
-document.body.addEventListener('click', (e) => {
-  const particle = document.createElement('div');
-  particle.className = 'particle';
-  particle.style.left = e.clientX + 'px';
-  particle.style.top = e.clientY + 'px';
-  particle.style.background = colors[Math.floor(Math.random()*colors.length)];
-  document.body.appendChild(particle);
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
 
-  let dx = (Math.random()-0.5)*10;
-  let dy = (Math.random()-0.5)*10;
-  let life = 0;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const img = document.createElement('img');
+    img.src = event.target.result;
 
-  function move() {
-    if(life>30){
-      particle.remove();
-      return;
-    }
-    particle.style.left = (particle.offsetLeft+dx)+'px';
-    particle.style.top = (particle.offsetTop+dy)+'px';
-    life++;
-    requestAnimationFrame(move);
+    // إضافة تأثير مضحك عشوائي
+    const filters = ["grayscale(100%)", "invert(100%)", "blur(3px)", "sepia(100%)", "contrast(200%)"];
+    img.style.filter = filters[Math.floor(Math.random() * filters.length)];
+
+    output.innerHTML = "";
+    output.appendChild(img);
   }
-  move();
+  reader.readAsDataURL(file);
 });
 </script>
 
