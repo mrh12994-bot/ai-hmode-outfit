@@ -2,179 +2,117 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>تحليل شخصية الأنمي العميق</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فحص قوة كلمة المرور</title>
 <style>
-body{
-    font-family: Arial;
-    background: linear-gradient(135deg,#141e30,#243b55);
-    color:white;
-    text-align:center;
-    padding:20px;
-}
-h1{margin-bottom:20px;}
-.question{font-size:20px;margin:20px 0;}
-button{
-    margin:8px;
-    padding:10px 20px;
-    font-size:16px;
-    cursor:pointer;
-    border:none;
-    border-radius:8px;
-}
-.option{background:#444;color:white;}
-.option:hover{background:#666;}
-#result{
-    margin-top:30px;
-    font-size:22px;
-}
-img{
-    width:250px;
-    margin-top:20px;
-    border-radius:12px;
-}
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    background: rgba(0,0,0,0.7);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.3);
+    width: 350px;
+    text-align: center;
+  }
+
+  h1 {
+    margin-bottom: 30px;
+    font-size: 24px;
+    color: #00ffe7;
+    text-shadow: 0 0 10px #00ffe7;
+  }
+
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+
+  .strength-bar {
+    height: 15px;
+    width: 100%;
+    background: #444;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .strength-fill {
+    height: 100%;
+    width: 0%;
+    background: red;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+
+  .strength-text {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+  }
 </style>
 </head>
 <body>
 
-<h1>تحليل شخصية الأنمي العميق</h1>
-<div id="quiz"></div>
-<div id="result"></div>
+<div class="container">
+  <h1>فحص قوة كلمة المرور</h1>
+  <input type="password" id="password" placeholder="أدخل كلمة المرور هنا">
+  <div class="strength-bar">
+    <div class="strength-fill" id="strength-fill"></div>
+  </div>
+  <div class="strength-text" id="strength-text">ضعيفة</div>
+</div>
 
 <script>
+const password = document.getElementById('password');
+const strengthFill = document.getElementById('strength-fill');
+const strengthText = document.getElementById('strength-text');
 
-let traits = {
-bravery:0,intelligence:0,leadership:0,darkness:0,kindness:0,
-anger:0,calmness:0,ambition:0,loyalty:0,independence:0
-};
+password.addEventListener('input', () => {
+  const val = password.value;
+  let strength = 0;
 
-let current = 0;
+  if (val.length >= 8) strength += 1;
+  if (/[A-Z]/.test(val)) strength += 1;
+  if (/[0-9]/.test(val)) strength += 1;
+  if (/[^A-Za-z0-9]/.test(val)) strength += 1;
 
-const questions = [
-{q:"أواجه المخاطر بدون خوف", t:"bravery"},
-{q:"أفكر كثيراً قبل اتخاذ القرار", t:"intelligence"},
-{q:"أفضل أن أكون قائد الفريق", t:"leadership"},
-{q:"لدي جانب مظلم لا أظهره للجميع", t:"darkness"},
-{q:"أساعد الآخرين حتى لو تعبت", t:"kindness"},
-{q:"أغضب بسرعة", t:"anger"},
-{q:"أحافظ على هدوئي في المواقف الصعبة", t:"calmness"},
-{q:"لدي طموح كبير لتحقيق أهدافي", t:"ambition"},
-{q:"أنا مخلص جداً لأصدقائي", t:"loyalty"},
-{q:"أفضل الاعتماد على نفسي", t:"independence"},
-{q:"أحب القتال والتحدي", t:"bravery"},
-{q:"أحل المشاكل بالمنطق", t:"intelligence"},
-{q:"الناس تثق بقراراتي", t:"leadership"},
-{q:"أحياناً أفكر بالانتقام", t:"darkness"},
-{q:"قلبي طيب", t:"kindness"},
-{q:"أتصرف بعصبية أحياناً", t:"anger"},
-{q:"أبقى هادئاً تحت الضغط", t:"calmness"},
-{q:"أسعى دائماً للأفضل", t:"ambition"},
-{q:"لا أخون من أحب", t:"loyalty"},
-{q:"لا أحب أن يتحكم بي أحد", t:"independence"},
-{q:"أغامر لتحقيق ما أريد", t:"bravery"},
-{q:"ذكائي أهم من قوتي", t:"intelligence"},
-{q:"أتحمل مسؤولية أخطاء الفريق", t:"leadership"},
-{q:"أخفي مشاعري الحقيقية", t:"darkness"},
-{q:"أتعاطف مع الآخرين بسهولة", t:"kindness"},
-{q:"ينفد صبري بسرعة", t:"anger"},
-{q:"أفكر بهدوء قبل الرد", t:"calmness"},
-{q:"أريد أن أكون عظيماً يوماً ما", t:"ambition"},
-{q:"أضحي لأجل أصدقائي", t:"loyalty"},
-{q:"أفضل العمل وحدي أحياناً", t:"independence"}
-];
-
-function showQuestion(){
-if(current < questions.length){
-document.getElementById("quiz").innerHTML = `
-<div class="question">${questions[current].q}</div>
-<button class="option" onclick="answer(2)">نعم</button>
-<button class="option" onclick="answer(0)">لا</button>
-`;
-}else{
-showResult();
-}
-}
-
-function answer(value){
-traits[questions[current].t] += value;
-current++;
-showQuestion();
-}
-
-const characters = [
-{name:"Naruto Uzumaki",image:"https://cdn.myanimelist.net/images/characters/10/284121.jpg",
-traits:{bravery:9,intelligence:6,leadership:8,darkness:2,kindness:9,anger:5,calmness:4,ambition:10,loyalty:10,independence:6}},
-{name:"Sasuke Uchiha",image:"https://cdn.myanimelist.net/images/characters/13/284122.jpg",
-traits:{bravery:8,intelligence:7,leadership:6,darkness:9,kindness:3,anger:6,calmness:6,ambition:8,loyalty:5,independence:9}},
-{name:"L Lawliet",image:"https://cdn.myanimelist.net/images/characters/9/27947.jpg",
-traits:{bravery:5,intelligence:10,leadership:6,darkness:6,kindness:4,anger:2,calmness:8,ambition:7,loyalty:6,independence:9}},
-{name:"Light Yagami",image:"https://cdn.myanimelist.net/images/characters/9/94562.jpg",
-traits:{bravery:7,intelligence:10,leadership:7,darkness:9,kindness:2,anger:4,calmness:7,ambition:10,loyalty:3,independence:9}},
-{name:"Levi Ackerman",image:"https://cdn.myanimelist.net/images/characters/2/241413.jpg",
-traits:{bravery:9,intelligence:8,leadership:7,darkness:5,kindness:4,anger:3,calmness:9,ambition:7,loyalty:8,independence:8}},
-{name:"Itachi Uchiha",image:"https://cdn.myanimelist.net/images/characters/9/110307.jpg",
-traits:{bravery:8,intelligence:9,leadership:6,darkness:8,kindness:6,anger:2,calmness:9,ambition:7,loyalty:9,independence:9}},
-{name:"Eren Yeager",image:"https://cdn.myanimelist.net/images/characters/10/216895.jpg",
-traits:{bravery:9,intelligence:7,leadership:7,darkness:7,kindness:5,anger:8,calmness:3,ambition:9,loyalty:8,independence:7}},
-{name:"Mikasa Ackerman",image:"https://cdn.myanimelist.net/images/characters/7/216894.jpg",
-traits:{bravery:9,intelligence:7,leadership:5,darkness:4,kindness:6,anger:4,calmness:8,ambition:6,loyalty:10,independence:7}},
-{name:"Tanjiro Kamado",image:"https://cdn.myanimelist.net/images/characters/9/395994.jpg",
-traits:{bravery:8,intelligence:6,leadership:6,darkness:2,kindness:10,anger:4,calmness:7,ambition:8,loyalty:10,independence:6}},
-{name:"Goku",image:"https://cdn.myanimelist.net/images/characters/10/318304.jpg",
-traits:{bravery:10,intelligence:5,leadership:6,darkness:1,kindness:8,anger:4,calmness:6,ambition:9,loyalty:9,independence:7}},
-{name:"Vegeta",image:"https://cdn.myanimelist.net/images/characters/13/318305.jpg",
-traits:{bravery:9,intelligence:7,leadership:6,darkness:6,kindness:4,anger:8,calmness:5,ambition:10,loyalty:6,independence:9}},
-{name:"Killua Zoldyck",image:"https://cdn.myanimelist.net/images/characters/2/164635.jpg",
-traits:{bravery:8,intelligence:8,leadership:4,darkness:6,kindness:6,anger:4,calmness:7,ambition:7,loyalty:9,independence:8}},
-{name:"Gon Freecss",image:"https://cdn.myanimelist.net/images/characters/10/174167.jpg",
-traits:{bravery:9,intelligence:6,leadership:5,darkness:2,kindness:8,anger:5,calmness:5,ambition:8,loyalty:9,independence:6}},
-{name:"Lelouch Lamperouge",image:"https://cdn.myanimelist.net/images/characters/11/174517.jpg",
-traits:{bravery:7,intelligence:10,leadership:9,darkness:8,kindness:3,anger:4,calmness:8,ambition:10,loyalty:6,independence:9}},
-{name:"Erwin Smith",image:"https://cdn.myanimelist.net/images/characters/10/216896.jpg",
-traits:{bravery:9,intelligence:8,leadership:10,darkness:5,kindness:5,anger:3,calmness:8,ambition:9,loyalty:9,independence:7}},
-{name:"All Might",image:"https://cdn.myanimelist.net/images/characters/10/299887.jpg",
-traits:{bravery:10,intelligence:7,leadership:9,darkness:1,kindness:9,anger:3,calmness:7,ambition:8,loyalty:10,independence:6}},
-{name:"Shoto Todoroki",image:"https://cdn.myanimelist.net/images/characters/6/299889.jpg",
-traits:{bravery:8,intelligence:7,leadership:5,darkness:4,kindness:6,anger:3,calmness:8,ambition:7,loyalty:7,independence:8}},
-{name:"Madara Uchiha",image:"https://cdn.myanimelist.net/images/characters/6/205015.jpg",
-traits:{bravery:10,intelligence:9,leadership:8,darkness:10,kindness:1,anger:6,calmness:7,ambition:10,loyalty:4,independence:10}},
-{name:"Hisoka",image:"https://cdn.myanimelist.net/images/characters/10/164636.jpg",
-traits:{bravery:8,intelligence:7,leadership:4,darkness:9,kindness:2,anger:3,calmness:8,ambition:7,loyalty:2,independence:9}}
-];
-
-function calculateMatch(user, character){
-let total = 0;
-let max = 0;
-for(let key in user){
-let diff = Math.abs(user[key] - character[key]);
-total += (10 - diff);
-max += 10;
-}
-return Math.round((total/max)*100);
-}
-
-function showResult(){
-let bestMatch = null;
-let highest = 0;
-
-characters.forEach(char=>{
-let percent = calculateMatch(traits, char.traits);
-if(percent > highest){
-highest = percent;
-bestMatch = char;
-}
+  switch(strength) {
+    case 0:
+    case 1:
+      strengthFill.style.width = '25%';
+      strengthFill.style.background = 'red';
+      strengthText.textContent = 'ضعيفة';
+      break;
+    case 2:
+      strengthFill.style.width = '50%';
+      strengthFill.style.background = 'orange';
+      strengthText.textContent = 'متوسطة';
+      break;
+    case 3:
+      strengthFill.style.width = '75%';
+      strengthFill.style.background = '#00bfff';
+      strengthText.textContent = 'قوية';
+      break;
+    case 4:
+      strengthFill.style.width = '100%';
+      strengthFill.style.background = '#00ff94';
+      strengthText.textContent = 'قوية جدًا';
+      break;
+  }
 });
-
-document.getElementById("quiz").style.display="none";
-
-document.getElementById("result").innerHTML = `
-أنت تشبه <b>${bestMatch.name}</b><br>
-نسبة التطابق: ${highest}%<br>
-<img src="${bestMatch.image}">
-`;
-}
-
-showQuestion();
-
 </script>
+
 </body>
 </html>
